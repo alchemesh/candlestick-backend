@@ -40,6 +40,11 @@ jobs:
             - name: Test Docker Image
               run: |
                   sudo docker exec -i market-app cat /app/test.log
+
+            - name: Clean Docker Deployments
+              run: |
+                  sudo docker stop market-app && sudo docker rm market-app
+                  sudo docker stop rabbitmq && sudo docker rm rabbitmq
     deploy_job:
         needs: test_job
         runs-on: self-hosted
