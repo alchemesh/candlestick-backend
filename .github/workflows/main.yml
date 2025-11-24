@@ -32,14 +32,14 @@ jobs:
                   sudo docker run -itd -p 15672:15672 -p 5672:5672 --network=shadow-net --name rabbitmq rabbitmq:3-management
                   sleep 30s
               
-            - name: Run Docker image
+            - name: Run Python Backend
               run: |
                   sudo docker run -itd --link rabbitmq:rabbitmq --network=shadow-net --name market-app ${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
                   sleep 30s
 
             - name: Test Docker Image
               run: |
-                  sudo docker exec -it market-app tee /app/test.log
+                  sudo docker exec -i market-app cat /app/test.log
     deploy_job:
         needs: test_job
         runs-on: self-hosted
