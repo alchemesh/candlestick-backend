@@ -26,12 +26,15 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v5
-                  
+
+            - name: Run Rabbit MQ
+              run: sudo docker run -itd -p 15672:15672 -p 5672:5672 --name rabbitmq rabbitmq:3-management
+              
             - name: Run Docker image
-              run: sudo docker run -itd -p 3000:3000 --link rabbitmq:rabbitmq --link java-api:java-api node-frontend ${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
+              run: sudo docker run -itd --link rabbitmq:rabbitmq --name market-app ${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
 
             - name: Test Docker Image
-              run: curl http://localhost:3000
+              run: sudo docker exec -it market-app cat /app/test.log
     deploy_job:
         needs: test_job
         runs-on: self-hosted
