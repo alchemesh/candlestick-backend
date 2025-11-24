@@ -1,3 +1,7 @@
+name: Candlestick Backend Pipeline
+
+on: push
+
 jobs:
     build_job:
         runs-on: self-hosted
