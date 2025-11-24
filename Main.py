@@ -5,6 +5,7 @@ import pandas as pd
 import pika
 import json
 import requests
+from datetime import datetime
 
 # Java API
 url = "http://java-api:8080/api/"
@@ -20,6 +21,11 @@ def callback(ch, method, properties, body):
 
 # Main
 def main():
+    #Write to log for application start
+    datetimeString = datetime.now()
+    with open("test.log", "w") as file:
+        file.write(f"Successfully Started: " + str(datetimeString) + "\n")
+
     # Gets event from RabbitMQ
     connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
     channel = connection.channel()
