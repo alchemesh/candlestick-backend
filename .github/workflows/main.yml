@@ -17,6 +17,9 @@ jobs:
 
             - name: Docker Publish
               run: sudo docker push ${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
+
+            - name: Docker Logout
+              run: sudo docker logout https://docker.io
     test_job:
         needs: build_job
         runs-on: self-hosted
