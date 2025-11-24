@@ -34,7 +34,9 @@ jobs:
               run: sudo docker run -itd --link rabbitmq:rabbitmq --name market-app ${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
 
             - name: Test Docker Image
-              run: sudo docker exec -it market-app cat /app/test.log
+              run: |
+                  sleep 30s
+                  sudo docker exec -it market-app tee /app/test.log
     deploy_job:
         needs: test_job
         runs-on: self-hosted
