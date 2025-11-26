@@ -28,7 +28,7 @@ jobs:
               if: steps.pip-cache.outputs.cache-hit != 'true' 
               run: |
                   python3 -m pip install --upgrade pip --break-system-packages
-                  pip install python3-pytest python3-coverage --break-system-packages
+                  pip install pytest coverage --break-system-packages
                   pip install -r requirements.txt --break-system-packages
 
             - name: Unit Test
@@ -65,7 +65,7 @@ jobs:
               if: steps.pip-cache.outputs.cache-hit != 'true' 
               run: |
                   python3 -m pip install --upgrade pip --break-system-packages
-                  pip install python3-pytest python3-coverage --break-system-packages
+                  pip install pytest coverage --break-system-packages
                   pip install -r requirements.txt --break-system-packages
 
             - name: Run Coverage
