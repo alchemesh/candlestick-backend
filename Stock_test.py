@@ -14,3 +14,7 @@ def stock_class_instance():
 class TestStock:
     def test_stock_name(self, stock_class_instance):
         assert stock_class_instance.getName() == "Microsoft"
+
+    def test_stock_event(self, stock_class_instance):
+        expected_data = { "eventID": "TEST", "ticker": "MSFT", "timestamp": "Future Time" }
+        assert stock_class_instance.getEvent() == expected_data
