@@ -27,9 +27,9 @@ jobs:
             - name: Install Dependencies
               if: steps.pip-cache.outputs.cache-hit != 'true' 
               run: |
-                  python3 -m python3-pip install --upgrade python3-pip
-                  python3-pip install python3-pytest python3-coverage
-                  python3-pip install -r requirements.txt
+                  python3 -m pip install --upgrade python3-pip
+                  pip install python3-pytest python3-coverage
+                  pip install -r requirements.txt
 
             - name: Unit Test
               run: pytest
@@ -64,9 +64,9 @@ jobs:
             - name: Install Dependencies
               if: steps.pip-cache.outputs.cache-hit != 'true' 
               run: |
-                  python3 -m python3-pip install --upgrade python3-pip
-                  python3-pip install python3-pytest python3-coverage
-                  python3-pip install -r requirements.txt
+                  python3 -m pip install --upgrade python3-pip
+                  pip install python3-pytest python3-coverage
+                  pip install -r requirements.txt
 
             - name: Run Coverage
               run: |
