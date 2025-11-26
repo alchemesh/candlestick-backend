@@ -27,7 +27,7 @@ jobs:
             - name: Install Dependencies
               if: steps.pip-cache.outputs.cache-hit != 'true' 
               run: |
-                  python3 -m pip install --upgrade python3-pip
+                  python3 -m pip install --upgrade pip --break-system-packages
                   pip install python3-pytest python3-coverage
                   pip install -r requirements.txt
 
@@ -64,7 +64,7 @@ jobs:
             - name: Install Dependencies
               if: steps.pip-cache.outputs.cache-hit != 'true' 
               run: |
-                  python3 -m pip install --upgrade python3-pip
+                  python3 -m pip install --upgrade pip --break-system-packages
                   pip install python3-pytest python3-coverage
                   pip install -r requirements.txt
 
