@@ -70,9 +70,10 @@ jobs:
 
             - name: Run Coverage
               run: |
-                  pytest --cov=.
-                  python3 -m coverage report > coverage/coverage_report.txt
-                  python3 -m coverage xml > coverage/coverage_report.xml
+                  pytest --cov --cov-report=xml:covarage
+                  pytest --cov --cov-report=html:coverage
+                  #python3 -m coverage report > coverage/coverage_report.txt
+                  #python3 -m coverage xml > coverage/coverage_report.xml
             - name: Archive Code Coverage Results
               uses: actions/upload-artifact@v4
               with:
