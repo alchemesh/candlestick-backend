@@ -27,9 +27,9 @@ jobs:
             - name: Install Dependencies
               if: steps.pip-cache.outputs.cache-hit != 'true' 
               run: |
-                  python -m pipx install --upgrade pip
-                  pipx install pytest coverage
-                  pipx install -r requirements.txt
+                  python3 -m pip install --upgrade pip
+                  pip install pytest coverage
+                  pip install -r requirements.txt
 
             - name: Unit Test
               run: pytest
@@ -64,14 +64,14 @@ jobs:
             - name: Install Dependencies
               if: steps.pip-cache.outputs.cache-hit != 'true' 
               run: |
-                  python -m pipx install --upgrade pip
-                  pipx install pytest coverage
-                  pipx install -r requirements.txt
+                  python3 -m pip install --upgrade pip
+                  pip install pytest coverage
+                  pip install -r requirements.txt
 
             - name: Run Coverage
               run: |
                   pytest --cov=.
-                  python -m coverage report
+                  python3 -m coverage report
             - name: Archive Code Coverage Results
               uses: actions/upload-artifact@v4
               with:
