@@ -13,7 +13,7 @@ jobs:
             - name: Setup Python
               uses: actions/setup-python@v5
               with:
-                python-version: '3.14.0'
+                python-version: '3.15.0'
 
             - name: Cache Python dependencies
               uses: actions/cache@v4
@@ -50,7 +50,7 @@ jobs:
             - name: Setup Python
               uses: actions/setup-python@v5
               with:
-                python-version: '24.11'
+                python-version: '3.15.0'
 
             - name: Cache Python dependencies
               uses: actions/cache@v4
