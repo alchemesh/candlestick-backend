@@ -1,7 +1,7 @@
 import pytest
 from Stock import Stock
 
-@pytest.fixture
+@pytest.fixture(scope="class")
 def stock_class_instance():
     """A pytest fixture that provides an instance of MyClass."""
     return Stock({
@@ -10,6 +10,7 @@ def stock_class_instance():
         "timestamp": "Future Time"
       }, "Microsoft")
 
+@pytest.mark.usefixtures("stock_class_instance")
 class TestStock:
-    def test_add(self):
+    def test_stock_name(self, stock_class_instance):
         assert stock_class_instance.getName() == "Microsoft"
