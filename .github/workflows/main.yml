@@ -129,7 +129,7 @@ jobs:
                       --network=shadow-net \
                       ${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
                   sleep 30s
-                  docker exec -i market-app cat /app/test.log
+                  docker exec -i backend-app cat /app/test.log
                   docker stop rabbitmq && docker rm rabbitmq
                   docker stop backend-app && docker rm backend-app
 
