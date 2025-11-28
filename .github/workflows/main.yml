@@ -99,54 +99,53 @@ jobs:
     build_image_job:
         name: Docker Containerization
         needs: unit_test_job
-        if: github.ref == 'refs/head/main'
+        #if: github.ref == 'refs/head/main'
         runs-on: self-hosted
         steps:
-            - name: Checkout
-              uses: actions/checkout@v5
+            - name: Docker Login
+              uses: docker/login-action@v2.2.0
+              with:
+                username: ${{ vars.DOCKER_USERNAME }}
+                password: ${{ secrets.DOCKER_PASSWORD}}
 
             - name: Docker Build
-              run: sudo docker build -t ${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest .
+              uses: docker/build-push-action@v4
+              with:
+                context: .
+                push: false
+                tags: ${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
 
-            - name: Docker Login
-              run: sudo docker login --username=${{ vars.DOCKER_USERNAME }} --password=${{ secrets.DOCKER_PASSWORD}}
-
-            - name: Docker Publish
-              run: sudo docker push ${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
-
-            - name: Docker Logout
-              run: sudo docker logout https://docker.io
-    test_image_job:
-        name: Test Docker Image
-        if: github.ref == 'refs/head/main'
-        needs: build_image_job
-        runs-on: self-hosted
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v5
-
-            - name: Run Rabbit MQ
+            - name: Docker Image Testing
               run: |
-                  sudo docker run -itd -p 15672:15672 -p 5672:5672 --network=shadow-net --name rabbitmq rabbitmq:3-management
+                  docker run --name rabbitmq -itd \
+                      -p 15672:15672 \
+                      -p 5672:5672 \
+                      --network=shadow-net \
+                      rabbitmq:3-management
                   sleep 30s
-              
-            - name: Run Python Backend
-              run: |
-                  sudo docker run -itd --link rabbitmq:rabbitmq --network=shadow-net --name market-app ${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
+                  docker run --name backend-app -itd \
+                      -p 3000:3000 \
+                      --link rabbitmq:rabbitmq \
+                      --network=shadow-net \
+                      ${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
                   sleep 30s
+                  docker exec -i market-app cat /app/test.log
+                  docker stop rabbitmq && docker rm rabbitmq
+                  docker stop backend-app && docker rm backend-app
 
-            - name: Test Docker Image
-              run: |
-                  sudo docker exec -i market-app cat /app/test.log
+            - name: Docker Push
+              uses: docker/build-push-action@v4
+              with:
+                context: .
+                push: true
+                tags: ${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
 
-            - name: Clean Docker Deployments
-              run: |
-                  sudo docker stop market-app && sudo docker rm market-app
-                  sudo docker stop rabbitmq && sudo docker rm rabbitmq
+            #- name: Docker Logout
+            #  run: sudo docker logout https://docker.io
     deploy_image_job:
         name: Deploy Docker Image
         if: github.ref == 'refs/head/main'
-        needs: test_image_job
+        needs: build_image_job
         runs-on: self-hosted
         steps:
             - name: Checkout

@@ -13,3 +13,7 @@ class TestDay:
 
     def test_day_low(self, day_class_instance):
         assert day_class_instance.getLow() == 254.23
+
+    def test_day_getstate(self, day_class_instance):
+        day_class_instance.updateState()
+        assert day_class_instance.getState() == "Bullish"
