@@ -3,7 +3,103 @@ name: Candlestick Backend Pipeline
 on: push
 
 jobs:
-    build_job:
+    unit_test_job:
+        name: Unit Test
+        runs-on: self-hosted
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v5
+
+            #- name: Setup Python
+            #  uses: actions/setup-python@v5
+            #  with:
+            #    python-version: '3.13'
+
+            - name: Cache Python dependencies
+              uses: actions/cache@v4
+              id: pip-cache
+              with:
+                path: ~/.cache/pip
+                key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+                restore-keys: |
+                    ${{ runner.os }}-pip-
+            
+            - name: Install Dependencies
+              if: steps.pip-cache.outputs.cache-hit != 'true' 
+              run: |
+                  python3 -m pip install --upgrade pip --break-system-packages
+                  pip install pytest coverage pytest-cov --break-system-packages
+                  pip install -r requirements.txt --break-system-packages
+              
+            - name: Unit Test
+              run: pytest --junitxml=artifacts/event-test.xml
+
+            - name: Archive Test Results
+              uses: actions/upload-artifact@v4
+              with:
+                name: Event Test Result
+                path: artifacts/event-test.xml
+                retention-days: 5
+    code_coverage_job:
+        name: Code Coverage
+        runs-on: self-hosted
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v5
+
+            #- name: Setup Python
+            #  uses: actions/setup-python@v5
+            #  with:
+            #    python-version: '3.13'
+
+            - name: Cache Python dependencies
+              uses: actions/cache@v4
+              id: pip-cache
+              with:
+                path: ~/.cache/pip
+                key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+                restore-keys: |
+                    ${{ runner.os }}-pip-
+            
+            - name: Install Dependencies
+              if: steps.pip-cache.outputs.cache-hit != 'true' 
+              run: |
+                  python3 -m pip install --upgrade pip --break-system-packages
+                  pip install pytest coverage pytest-cov --break-system-packages
+                  pip install -r requirements.txt --break-system-packages
+
+            - name: Run Coverage
+              run: |
+                  pytest --cov --cov-report=xml:covarage
+                  pytest --cov --cov-report=html:coverage
+                  #python3 -m coverage report > coverage/coverage_report.txt
+                  #python3 -m coverage xml > coverage/coverage_report.xml
+            - name: Archive Code Coverage Results
+              uses: actions/upload-artifact@v4
+              with:
+                name: Code Coverage Result
+                path: coverage
+                retention-days: 5
+    verify_unit_test_job:
+        name: Verify Unit Test
+        needs: unit_test_job
+        runs-on: self-hosted
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v5
+
+            - name: Download Test Results
+              uses: actions/download-artifact@v4
+              with:
+                name: Event Test Result
+
+            - name: Simple Display Results
+              run: |
+                  cat event-test.xml
+    build_image_job:
+        name: Docker Containerization
+        needs: unit_test_job
+        if: github.ref == 'refs/head/main'
         runs-on: self-hosted
         steps:
             - name: Checkout
@@ -20,8 +116,10 @@ jobs:
 
             - name: Docker Logout
               run: sudo docker logout https://docker.io
-    test_job:
-        needs: build_job
+    test_image_job:
+        name: Test Docker Image
+        if: github.ref == 'refs/head/main'
+        needs: build_image_job
         runs-on: self-hosted
         steps:
             - name: Checkout
@@ -45,8 +143,10 @@ jobs:
               run: |
                   sudo docker stop market-app && sudo docker rm market-app
                   sudo docker stop rabbitmq && sudo docker rm rabbitmq
-    deploy_job:
-        needs: test_job
+    deploy_image_job:
+        name: Deploy Docker Image
+        if: github.ref == 'refs/head/main'
+        needs: test_image_job
         runs-on: self-hosted
         steps:
             - name: Checkout
