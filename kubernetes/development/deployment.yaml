@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: candlestick-backend-app-deploy
+  labels:
+    name: candlestick-backend-app-deploy
+    app: candlestick-backend-app
+  namespace: _{_NAMESPACE_}_
+spec:
+  replicas: _{_REPLICAS_}_
+  selector:
+    matchLabels:
+      name: candlestick-backend-app-pod
+      app: candlestick-backend-app
+
+  template:
+    metadata:
+      name: candlestick-backend-app-pod
+      labels:
+        name: candlestick-backend-app-pod
+        app: candlestick-backend-app
+    spec:
+      containers:
+        - name: candlestick-backend-app
+          imagePullPolicy: Always
+          image: _{_IMAGE_}_
+          env:
+            - name: RABBITMQ
+              value: candlestick-rabbitmq-service
+            - name: JAVA_API
+              value: candlestick-java-api-service._{_NAMESPACE_}_.svc
+          ports:
+            - containerPort: 3000
+              name: http

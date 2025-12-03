@@ -5,6 +5,7 @@ import pandas as pd
 import pika
 import json
 import requests
+import os
 from datetime import datetime
 
 # Java API
@@ -26,8 +27,17 @@ def main():
     with open("test.log", "w") as file:
         file.write(f"Successfully Started: " + str(datetimeString) + "\n")
 
+    # Get Environment Variables
+    try:
+        rabbitmq = os.environ['RABBITMQ']
+        javaAPI = os.environ['JAVA_API']
+        url = "http://" + java-api +"/api/"
+        #print(f"The value of MY_DOCKER_VARIABLE is: {my_variable}")
+    except KeyError:
+        print("MY_DOCKER_VARIABLE is not set.")
+
     # Gets event from RabbitMQ
-    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq))
     channel = connection.channel()
     channel.queue_declare(queue='my_queue')
     channel.basic_consume(queue='my_queue', on_message_callback=callback, auto_ack=True)
