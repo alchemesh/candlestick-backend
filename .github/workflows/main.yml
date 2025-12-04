@@ -43,6 +43,7 @@ jobs:
                 retention-days: 5
     code_coverage_job:
         name: Code Coverage
+        if: github.ref == 'refs/head/feature'
         needs: unit_test_job
         runs-on: self-hosted
         steps:
@@ -84,6 +85,7 @@ jobs:
                 retention-days: 5
     verify_unit_test_job:
         name: Verify Unit Test
+        if: github.ref == 'refs/head/feature'
         needs: unit_test_job
         runs-on: self-hosted
         steps:
