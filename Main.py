@@ -9,7 +9,7 @@ import os
 from datetime import datetime
 
 # Java API
-url = "http://java-api:8080/api/"
+#url = "http://java-api:8080/api/"
 headers = {
     "Content-Type": "application/json"
 }
@@ -30,8 +30,8 @@ def main():
     # Get Environment Variables
     try:
         rabbitmq = os.environ['RABBITMQ']
-        javaAPI = os.environ['JAVA_API']
-        url = "http://" + javaAPI +"/api/"
+        #javaAPI = os.environ['JAVA_API']
+        #url = "http://" + javaAPI +"/api/"
         #print(f"The value of MY_DOCKER_VARIABLE is: {my_variable}")
     except KeyError:
         print("MY_DOCKER_VARIABLE is not set.")
@@ -72,7 +72,13 @@ def startApp(eventData):
             stockDay.updateState()
             stockDay.createCandleAnatomy()  
             stock.updateDays(stockDay)
-            
+
+    #Create Java URL
+    javaAPI = os.environ['JAVA_API']
+    url = "http://" + javaAPI +"/api/"
+
+    print(url)
+    
     # Send to Java API
     sendData = json.dumps(stock.toJSON()) 
     response = requests.post(url, json=sendData, headers=headers)
