@@ -31,7 +31,7 @@ def main():
     try:
         rabbitmq = os.environ['RABBITMQ']
         javaAPI = os.environ['JAVA_API']
-        url = "http://" + java-api +"/api/"
+        url = "http://" + javaAPI +"/api/"
         #print(f"The value of MY_DOCKER_VARIABLE is: {my_variable}")
     except KeyError:
         print("MY_DOCKER_VARIABLE is not set.")
