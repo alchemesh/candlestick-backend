@@ -124,12 +124,12 @@ jobs:
                   docker run --name rabbitmq -itd \
                       -p 15672:15672 \
                       -p 5672:5672 \
-                      --network=shadow-net \
                       rabbitmq:3-management
                   sleep 30s
                   docker run --name backend-app -itd \
                       --env=RABBITMQ=rabbitmq \
                       --env=JAVA_API=java-api \
+                      --link rabbitmq:rabbitmq \
                       ${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
                   sleep 100s
                   docker exec -i backend-app cat /app/test.log
