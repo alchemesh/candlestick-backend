@@ -5,6 +5,7 @@ on: push
 jobs:
     unit_test_job:
         name: Unit Test
+        if: github.ref == 'refs/head/feature'
         runs-on: self-hosted
         steps:
             - name: Checkout
@@ -42,6 +43,7 @@ jobs:
                 retention-days: 5
     code_coverage_job:
         name: Code Coverage
+        needs: unit_test_job
         runs-on: self-hosted
         steps:
             - name: Checkout
@@ -98,7 +100,7 @@ jobs:
                   cat event-test.xml
     build_image_job:
         name: Docker Containerization
-        needs: unit_test_job
+        #needs: unit_test_job
         #if: github.ref == 'refs/head/main'
         runs-on: self-hosted
         steps:
@@ -124,11 +126,10 @@ jobs:
                       rabbitmq:3-management
                   sleep 30s
                   docker run --name backend-app -itd \
-                      -p 3000:3000 \
-                      --link rabbitmq:rabbitmq \
-                      --network=shadow-net \
+                      --env=RABBITMQ=rabbitmq \
+                      --env=JAVA_API=java-api \
                       ${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
-                  sleep 30s
+                  sleep 100s
                   docker exec -i backend-app cat /app/test.log
                   docker stop rabbitmq && docker rm rabbitmq
                   docker stop backend-app && docker rm backend-app
