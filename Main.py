@@ -37,7 +37,7 @@ def main():
         print("MY_DOCKER_VARIABLE is not set.")
 
     # Gets event from RabbitMQ
-    connection = pika.BlockingConnection(pika.ConnectionParameters("'" + rabbitmq + "'"))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq))
     channel = connection.channel()
     channel.queue_declare(queue='my_queue')
     channel.basic_consume(queue='my_queue', on_message_callback=callback, auto_ack=True)
