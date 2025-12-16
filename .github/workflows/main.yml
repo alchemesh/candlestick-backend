@@ -5,7 +5,7 @@ on: push
 jobs:
     unit_test_job:
         name: Unit Test
-        if: github.ref == 'refs/head/feature'
+        #if: github.ref == 'refs/head/feature'
         runs-on: self-hosted
         steps:
             - name: Checkout
@@ -43,7 +43,7 @@ jobs:
                 retention-days: 5
     code_coverage_job:
         name: Code Coverage
-        if: github.ref == 'refs/head/feature'
+        #if: github.ref == 'refs/head/feature'
         needs: unit_test_job
         runs-on: self-hosted
         steps:
@@ -85,7 +85,7 @@ jobs:
                 retention-days: 5
     verify_unit_test_job:
         name: Verify Unit Test
-        if: github.ref == 'refs/head/feature'
+        #if: github.ref == 'refs/head/feature'
         needs: unit_test_job
         runs-on: self-hosted
         steps:
@@ -148,7 +148,7 @@ jobs:
     deploy_image_job:
         name: Deploy Docker Image
         #if: github.ref == 'refs/head/main'
-        #needs: build_image_job
+        needs: build_image_job
         outputs:
           APP_INGRESS_URL: ${{ steps.set-ingress-host-id.outputs.APP_INGRESS_HOST}}
         runs-on: self-hosted
