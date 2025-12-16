@@ -75,7 +75,7 @@ def startApp(eventData):
 
     #Create Java URL
     javaAPI = os.environ['JAVA_API']
-    url = "http://" + javaAPI +":8080/api/"
+    url = "http://" + javaAPI +"/api/"
 
     print(url)
     
