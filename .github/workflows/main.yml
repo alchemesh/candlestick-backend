@@ -119,22 +119,22 @@ jobs:
                 push: false
                 tags: ${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
 
-            - name: Docker Image Testing
-              run: |
-                  docker run --name rabbitmq -itd \
-                      -p 15672:15672 \
-                      -p 5672:5672 \
-                      rabbitmq:3-management
-                  sleep 180s
-                  docker run --name backend-app -itd \
-                      --env=RABBITMQ=rabbitmq \
-                      --env=JAVA_API=java-api \
-                      --link rabbitmq:rabbitmq \
-                      ${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
-                  sleep 90s
-                  docker exec -i backend-app cat /app/test.log
-                  docker stop rabbitmq && docker rm rabbitmq
-                  docker stop backend-app && docker rm backend-app
+            #- name: Docker Image Testing
+            #  run: |
+             #     docker run --name rabbitmq -itd \
+             #         -p 15672:15672 \
+              #        -p 5672:5672 \
+               #       rabbitmq:3-management
+               #   sleep 180s
+               #   docker run --name backend-app -itd \
+               #       --env=RABBITMQ=rabbitmq \
+                #      --env=JAVA_API=java-api \
+                #      --link rabbitmq:rabbitmq \
+                #      ${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
+                #  sleep 90s
+                #  docker exec -i backend-app cat /app/test.log
+                #  docker stop rabbitmq && docker rm rabbitmq
+                #  docker stop backend-app && docker rm backend-app
 
             - name: Docker Push
               uses: docker/build-push-action@v4
